@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getToken, refreshToken } from './auth';
+import { getToken, refreshToken } from '../utils/auth';
 
 const api = axios.create({
   baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api',

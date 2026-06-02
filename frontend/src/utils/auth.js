@@ -24,3 +24,30 @@ export const logout = () => {
   removeRefreshToken();
   removeUser();
 };
+
+// Refresh token function - uses axios directly to avoid circular dependency
+export const refreshToken = async () => {
+  try {
+    const axios = await import('axios').then(m => m.default);
+    const refreshTokenValue = getRefreshToken();
+    
+    if (!refreshTokenValue) {
+      throw new Error('No refresh token available');
+    }
+
+    const response = await axios.post(
+      `${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/auth/refresh-token`,
+      { refreshToken: refreshTokenValue }
+    );
+
+    const { token, refreshToken: newRefreshToken } = response.data;
+    setToken(token);
+    setRefreshToken(newRefreshToken);
+
+    return token;
+  } catch (error) {
+    logout();
+    throw error;
+  }
+};
+
